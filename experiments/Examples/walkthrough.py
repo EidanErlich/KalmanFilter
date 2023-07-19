@@ -1848,7 +1848,7 @@ def ekf_cvtr():
         # cbar.ax.set_ylabel(u'EPE', rotation=270)
         # cbar.ax.set_xlabel(u'm')
 
-        # Start/Goal
+        # Start / Goal
         plt.scatter(x0[0], x1[0], s=250, label='Start', c='g')
         plt.scatter(x0[-1], x1[-1], s=250, label='Goal', c='r')
 
