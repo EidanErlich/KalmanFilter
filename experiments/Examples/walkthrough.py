@@ -1567,10 +1567,10 @@ def ekf_cvtr():
     #                          [0.7, 0.1], [0.8, 0], [0.8, -0.3], [0.6, -0.4], [0.4, -0.3],
     #                          [0.2, -0.05], [0, 0]]).T
     #
-    track_points = np.array([[0, 0], [0.2, 0.3], [0.4, 0.35], [0.5, 0.5], [0.8, 0.3],
-                             [0.7, 0.1], [0.8, 0]]).T
+    # track_points = np.array([[0, 0], [0.2, 0.3], [0.4, 0.35], [0.5, 0.5], [0.8, 0.3],
+    #                          [0.7, 0.1], [0.8, 0]]).T
 
-    # track_points = np.array([[0, 0], [0.2, 0.2], [0.3, 0.15], [0.4, 0.3], [0.5, 0.4]]).T
+    track_points = np.array([[0, 0], [0.2, 0.2], [0.3, 0.15], [0.4, 0.3], [0.5, 0.4]]).T
     points = track_points * 10000
 
     # points *= 10000
@@ -1656,9 +1656,10 @@ def ekf_cvtr():
 
     # P = np.diag([1000.0, 1000.0, 1000.0, 1000.0, 1000.0])
     # Set the initial uncertainties for each state variable
-    initial_uncertainties = [10.0, 10.0, np.radians(5), 20.0, np.radians(2)]
+    # state = [x, y, heading, velocity, yaw_rate]
+    initial_uncertainties = [10.0, 10.0, np.radians(10), 40.0, np.radians(3)]
 
-    # Initialize the P matrix
+    # Initialize the P matrix //It is squared b/c variance not standard dev
     P = np.diag(initial_uncertainties) ** 2
 
     # process covariance
@@ -1676,15 +1677,15 @@ def ekf_cvtr():
     # Define maximum centripetal acceleration
     max_centripetal_acceleration = 3 * 9.8  # Maximum lateral acceleration in m/s^2
 
-    # Define variances for each state variable
-    var_x = 20.0 ** 2  # Variance for x position
-    var_y = 20.0 ** 2  # Variance for y position
-    var_heading = np.radians(5) ** 2  # Variance for heading angle
-    var_velocity = (0.05 * max_centripetal_acceleration) ** 2  # Variance for velocity
-    var_yaw_rate = np.radians(2) ** 2  # Variance for yaw rate
+    # Define standard deviations for each state variable
+    var_x = 20.0  # standard deviation for x position
+    var_y = 20.0  # standard deviation for y position
+    var_heading = np.radians(10)  # standard deviation for heading angle
+    var_velocity = (0.05 * max_centripetal_acceleration)  # standard deviation for velocity
+    var_yaw_rate = np.radians(3)  # standard deviation for yaw rate
 
     # Create the Q matrix
-    Q = np.diag([var_x, var_y, var_heading, var_velocity, var_yaw_rate])
+    Q = np.diag([var_x, var_y, var_heading, var_velocity, var_yaw_rate]) ** 2
 
     # Measurment function h
 
@@ -1698,12 +1699,14 @@ def ekf_cvtr():
     # m_noise = input_sensor_noise**2
     # R = np.matrix([[m_noise, 0.0],
     #                [0.0, m_noise]])
-    R = np.diag([input_sensor_noise**2, input_sensor_noise**2])
+    # Squared b/c variance not standard dev
+    R = np.diag([input_sensor_noise, input_sensor_noise]) ** 2
 
     I = np.eye(5)
 
     # Initial state
-    x = np.matrix([[0.0, 0.0, 3.14, 6.001, 0.05]]).T
+    # state = [x, y, vel, heading, yaw_rate]
+    x = np.matrix([[0.0, 0.0, 50, 1.5, 0.0]]).T
 
     # Preallocation for Plotting
     x0 = []
@@ -1866,6 +1869,7 @@ def ekf_cvtr():
 
     plotxy()
     plt.show()
+
 
 
 
